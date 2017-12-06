@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="layout">
+	
+				<div class="este" >
+						<div class="col-11" layout:fragment="contenido">
+							<div class="row">
+								<div class="d-none d-md-block col">
+										<h1 th:text="${animeDelID.nombre}"></h1>
+								</div>
+								<div class="col d-block d-sm-none">
+										<h2 th:text="${animeDelID.nombre}"></h2>
+								</div>
+								<div class="col d-none d-sm-block d-md-none">
+										<h2 th:text="${animeDelID.nombre}"></h2>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-3 d-none d-md-block">
+									<img class="img portada" th:src="'/img/' + ${animeDelID.imagen}"></img>
+								</div>
+								
+								<div class="col-9">
+									<p th:text="'Tipo: ' + ${animeDelID.tipo}"></p>
+									<p th:text="'Generos: ' + ${animeDelID.genero1} + ${animeDelID.genero2} + ${animeDelID.genero3}"></p>
+									<span th:each="cancion : ${listaCanciones}">
+										<a th:href="'/subs/' + ${animeDelID.nombre}" th:attr="download= ${animeDelID.nombre} + ' - ' + ${cancion.tipo} + '.subs '"><button class="btn btn-info" th:text="${cancion.tipo}"></button></a>
+									</span>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col">
+									<h3>Sinopsis</h3>
+									<p th:text="${animeDelID.sinopsis}"></p>
+								</div>
+							</div>
+					
+						</div>
+				</div>
+				
+</html>

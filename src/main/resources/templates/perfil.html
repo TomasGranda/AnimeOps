@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="layout">
+	
+	<head>
+		
+	</head>
+	
+		<span layout:fragment="contenido">
+			<div class="row">
+				<div class="col">
+					<ul class="nav nav-tabs centered">
+					  <li class="nav-item">
+					    <a class="nav-link" th:classappend="${perfilActivo}" href="/cuenta/perfil">Perfil</a>
+					  </li>
+					  <li class="nav-item">
+					    <a class="nav-link" href="#">Link</a>
+					  </li>
+					  <li class="nav-item">
+					    <a class="nav-link" href="#">Link</a>
+					  </li>
+					  <li class="nav-item">
+					    <a class="nav-link" href="#">Disabled</a>
+					  </li>
+					</ul>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col">
+					<br></br>
+					<h3 style="text-decoration: underline;">Nombre de Usuario:</h3>
+					<hr></hr>
+					<p th:text="${nombrePerfil}"></p>
+					<br></br>
+					<form action="/cuenta/perfil" method="POST">
+						<p>Cambiar Nombre de Usuario</p>
+						<input type="text" name="nuevoNombre" placeholder="Nuevo Nombre de Usuario..." size="25"></input>
+						<button type="submit">Cambiar Nombre</button>
+					</form>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col">
+				<hr></hr>
+				<br></br>
+					<h3 style="text-decoration: underline;">Direccion de Email:</h3>
+					<hr></hr>
+					<p th:text="${emailPerfil}"></p>
+					<br></br>
+					<form action="/cuenta/perfil" method="POST">
+						<p>Cambiar Direccion de Email</p>
+						<input type="text" name="nuevoEmail" placeholder="Nueva Direccion de Email..." size="25"></input>
+						<button type="submit">Cambiar Email</button>
+					</form>
+				</div>
+			</div>
+		</span>
+
+
+</html>

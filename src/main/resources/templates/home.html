@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="layout">	
+	
+		<div class="container" layout:fragment="contenido">
+			
+			<h2>AnimeOps<p class="subtitulo">Esta es una pagina de anime donde se suben subtitulos para los openings, endings y OST's de tus animes favoritos</p></h2>
+			<span th:each="anime : ${listaHome}">
+				<div class="thing">
+					<a th:href="'/animes/' + ${anime.id}">
+					   	<img th:src="'/img/' + ${anime.imagen}" class="img" alt=""></img>
+					   	<p th:text="${anime.nombre}"></p>
+					</a>
+				</div>
+			</span>
+			<a href="/animes"><h3>Ver mas...</h3></a>
+		</div>
+			
+</html>

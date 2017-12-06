@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="layout">
+	
+				<div class="col" layout:fragment="contenido">
+					<p th:classappend="${error}" th:text="${mensajeError}"></p>
+					<form class="form-horizontal" action="/login" method="POST">
+						<div class="control-group campos">
+							<label class="control-label"  for="username">Nombre de Usuario:</label>
+							<div class="controls">
+								<input type="text" name="usuario" placeholder="Nombre de Usuario..."></input>
+								<p class="help-block"></p>
+							</div>
+						</div>
+						<div class="control-group">
+							<label class="control-label"  for="username">Contrase&ntilde;a:</label>
+							<div class="controls">
+								<input type="password" name="contrasena" placeholder="Contrase&ntilde;a..."></input>
+								<p class="help-block"></p>
+							</div>
+						</div>
+						<input type="submit" value="Enviar..."></input>
+					</form>
+				</div>
+			
+</html>

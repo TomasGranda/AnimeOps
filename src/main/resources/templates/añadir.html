@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="layout">
+	
+				<div class="col" layout:fragment="contenido">
+				<form class="form-horizontal" action="/a&ntilde;adir" method="POST">
+				  <fieldset>
+				    <div id="legend">
+				      <legend class="">A&ntilde;adir una Cancion</legend>
+				    </div>
+				    <div class="control-group">
+				      <!-- Nombre de Cancion -->
+				      <label class="control-label" for="nombrecancion">Nombre de la Cancion:</label>
+				      <div class="controls">
+				      	<p th:classappend="${errorNombre}" th:text="${mensajeErrorNombre}"></p>
+				        <input type="text" id="username" name="cancionNombre" placeholder="" class="input-xlarge" th:value="${nombreAnterior}"></input>
+				   		<p></p>
+				      </div>
+				    </div>
+				 
+				    <div class="control-group">
+				      <!-- Tipo de Cancion -->
+				      <label class="control-label" for="tipo">Tipo</label>
+				      <div class="controls">
+				      	<p th:classappend="${errorTipo}" th:text="${mensajeErrorTipo}"></p>
+				        <select name="tipo" class="input-xlarge">
+				        	<option value="error">--Seleccione una Opcion--</option>
+				        	<option value="OP">Opening</option>
+				        	<option value="ED">Ending</option>
+				        	<option value="OST">OST	</option>
+				        </select>
+				        <p></p>
+				      </div>
+				    </div>
+				 
+				    <div class="control-group">
+				      <!-- Anime -->
+				      <label class="control-label" for="anime">Anime al que Pertenece</label>
+				      <div class="controls">
+				      	<p th:classappend="${errorAnime}" th:text="${mensajeErrorAnime}"></p>
+						<select name="anime">
+							<option th:value="error">--Seleccione una Opcion--</option>
+							<option th:each="anime : ${listaanimes}" th:value="${anime.nombre}" th:text="${anime.nombre}"></option>
+						</select>
+						<p></p>
+				      </div>
+				    </div>
+				 
+				    <div class="control-group">
+				      <!-- Banda -->
+				      <label class="control-label"  for="banda">Banda/Cantante/Autor</label>
+				      <div class="controls">
+				  	    <p th:classappend="${errorTipo}" th:text="${mensajeErrorTipo}"></p>    
+				        <input type="text" id="password_confirm" name="banda" class="input-xlarge" th:value="${bandaAnterior}"></input>
+				        <p class="help-block"></p>
+				      </div>
+				    </div>
+				 
+				    <div class="control-group">
+				      <!-- Button -->
+				      <div class="controls">
+				        <button class="btn btn-success">A&ntilde;adir Cancion</button>
+				      </div>
+				    </div>
+				  </fieldset>
+				</form>
+			</div>
+</html>

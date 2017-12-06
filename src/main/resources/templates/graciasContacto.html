@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="layout">
+	
+				<div class="col-9 este" layout:fragment="contenido">
+					<p>Gracias</p>
+					<p th:text="${nombre}"></p>
+					<p th:text="${comentario}"></p>
+				</div>
+				<a href="/contacto"><input value="volver" type="button"></input></a>
+				
+</html>

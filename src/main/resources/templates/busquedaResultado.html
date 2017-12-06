@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="layout">
+	
+				<div class="container" layout:fragment="contenido">
+						<h2 th:text="'Resultados para: ' + ${busqueda}"></h2>
+						<span th:each="anime : ${listaResultados}">
+							<div class="thing">
+								<a th:href="'/animes/' + ${anime.id}">
+								   	<img th:src="'/img/' + ${anime.imagen}" class="img" alt=""></img>
+								   	<p th:text="${anime.nombre}"></p>
+								</a>
+							</div>
+						</span>
+				</div>
+</html>

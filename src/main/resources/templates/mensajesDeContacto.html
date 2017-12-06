@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="layout">
+	
+				<div class="col-9 este" layout:fragment="contenido">
+					
+					<!--  >ul>
+						<li th:each="sabor : ${prueba}" th:text="${sabor}">
+						<label>Nombre: </label> <p th:text="${sabor.nombre}"></p>
+						</li>
+					</ul -->
+					
+					<div class="row">
+						<div class="item-sabor col-12" th:each="mensaje : ${listaMensajes}">
+							<span>
+								<a href="#" th:text="${mensaje.nombre}"> VAINILLA </a>
+								<a href="#" th:text="${mensaje.email}"> VAINILLA </a>
+								<a href="#" th:text="${mensaje.comentario}"> VAINILLA </a>
+							</span>
+						</div>
+					</div>
+					
+					
+					
+				</div>
+			
+
+</html>
