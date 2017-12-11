@@ -111,6 +111,9 @@ public class PrimerController
         }
     }
 	
+	// TODO: Terminar la subida de archivo y la validacion de tamaño de este
+	
+	
 	@GetMapping("/")
 	public static String paginaPrincipal(Model template, HttpServletRequest request) throws SQLException
 	{
@@ -225,6 +228,8 @@ public class PrimerController
 			
 		}
 		
+		// TODO : Crear metodo y template especial para cada cacion mostrando 
+		// todas las canciones subidas y por que usuario...
 		
 		template.addAttribute("archivo", animeDelID.getNombre() + " - ");
 		template.addAttribute("listaCanciones",listaCanciones);

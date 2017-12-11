@@ -4,6 +4,10 @@
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorator="layout">
 	
+	<head>
+		<script type="text/javascript" src="/js/tomas.js"></script>
+	</head>
+	<body>
 				<div class="col" layout:fragment="contenido">
 				<form class="form-horizontal" action="/a&ntilde;adir" method="POST">
 				  <fieldset>
@@ -12,7 +16,7 @@
 				    </div>
 				    <div class="control-group">
 				      <!-- Nombre de Cancion -->
-				      <label class="control-label" for="nombrecancion">Nombre de la Cancion:</label>
+				      <label class="control-label" for="nombrecancion">Nombre de la Cancion</label>
 				      <div class="controls">
 				      	<p th:classappend="${errorNombre}" th:text="${mensajeErrorNombre}"></p>
 				        <input type="text" id="username" name="cancionNombre" placeholder="" class="input-xlarge" th:value="${nombreAnterior}"></input>
@@ -60,6 +64,17 @@
 				        <p class="help-block"></p>
 				      </div>
 				    </div>
+				    
+				    <div class="control-group">
+				      <!-- Archivo -->
+				      <label class="control-label"  for="banda">Archivo de Subtitulos</label>
+				      <div class="controls">
+				  	    <p th:classappend="${errorArchivo}" th:text="${mensajeErrorArchivo}"></p>    
+				        <input type="file" name="archive" accept=".sub, .txt, .ssa, .srt" class="input-xlarge"></input>
+				        <p class="help-block"></p>
+				      </div>
+				    </div> <!-- Terminar parte de server tambien -->
+				    
 				 
 				    <div class="control-group">
 				      <!-- Button -->
@@ -70,4 +85,5 @@
 				  </fieldset>
 				</form>
 			</div>
+	</body>
 </html>
