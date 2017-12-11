@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="layout">
+	
+	<head>
+		
+	</head>
+	
+		<span layout:fragment="contenido">
+			<div class="row">
+				<div class="col">
+					<ul class="nav nav-tabs centered">
+						<li></li>
+						<li class="nav-item">
+					  		<a class="nav-link" href="/cuenta/perfil">Perfil</a>
+						</li>
+						<li class="nav-item">
+					  		<a class="nav-link active" href="/cuenta/aportes">Aportes</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col">
+					<br></br>
+					<h3>Tus Aportes:</h3>
+					<table style="width:100%">
+						<tr>
+							<th>Nombre</th> 
+							<th>Anime</th>
+							<th>Tipo</th>
+							<th>Banda</th>
+							<th>Descargas</th>
+						</tr>
+						<tr th:each="cancion : ${listaAportes}">
+							<td th:text="${cancion.nombre}"></td>
+							<td th:text="${cancion.anime}"></td> 
+							<td th:text="${cancion.tipo}"></td>
+							<td th:text="${cancion.banda}"></td>
+							<td th:text="${cancion.descargas}" style="width:1%;"></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+		</span>
+
+
+</html>

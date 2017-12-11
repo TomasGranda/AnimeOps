@@ -56,6 +56,7 @@ CREATE TABLE public.canciones
     anime text COLLATE pg_catalog."default" NOT NULL,
     descargas integer NOT NULL DEFAULT 0,
     usuario text COLLATE pg_catalog."default" NOT NULL,
+    codigo integer NOT NULL DEFAULT 0,
     CONSTRAINT canciones_pkey PRIMARY KEY (id)
 )
 WITH (

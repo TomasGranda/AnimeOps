@@ -28,3 +28,7 @@ ul.sinPuntoNiEspacio {
 	-webkit-padding-start: 0;
 	list-style-type: none;
  }
+ 
+ table, th, td {
+    border: 1px solid black;
+}

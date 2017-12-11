@@ -220,7 +220,7 @@ public class PrimerController
 			cancionAux = new Cancion(resultado2.getInt("id"), resultado2.getString("nombre"),
 									resultado2.getString("tipo"), resultado2.getString("banda"),
 									resultado2.getString("anime"), resultado2.getInt("descargas"),
-									resultado2.getString("usuario"));
+									resultado2.getString("usuario"), resultado2.getInt("codigo"));
 			listaCanciones.add(cancionAux);
 			
 		}
@@ -666,6 +666,57 @@ public class PrimerController
 		// Fin de Autentificacion
 	}
 	
+	@GetMapping("/cuenta/aportes")
+	public static String paginaCuentaAportes(Model template, HttpServletRequest request) throws SQLException
+	{
+		Connection connection;
+		connection = DriverManager.getConnection(Settings.db_url, Settings.db_user, Settings.db_password);	
+		//Login Autentificacion
+		template.addAttribute("Text", "text-align: center; font-size: 20px;");
+		HttpSession session = request.getSession();
+		String numeroSession = (String) session.getAttribute("session");
+		String nombreUsuario;
+		PreparedStatement ps2 = connection.prepareStatement("SELECT * FROM usuarios WHERE session=?;");
+		ps2.setString(1, numeroSession);
+		ResultSet result = ps2.executeQuery();
+		if(autentificacion(request,template) && result.next())
+		{
+			nombreUsuario = result.getString("username");
+			ArrayList<Cancion> listaAportes;
+			listaAportes = new ArrayList<Cancion>();
+			PreparedStatement ps = connection.prepareStatement("SELECT * FROM canciones WHERE usuario=?");
+			ps.setString(1, nombreUsuario);
+			ResultSet resultado = ps.executeQuery();
+			Cancion cancionAux;
+			while(resultado.next())
+			{
+				cancionAux = new Cancion(resultado.getInt("id"), resultado.getString("nombre"),
+						resultado.getString("tipo"), resultado.getString("banda"),
+						resultado.getString("anime"), resultado.getInt("descargas"),
+						resultado.getString("usuario"), resultado.getInt("codigo"));
+				listaAportes.add(cancionAux);
+			}
+			template.addAttribute("login", "Bienvenido, " + nombreUsuario);
+			template.addAttribute("registro", "Logout");
+			template.addAttribute("loginLink", "/editar");
+			template.addAttribute("registroLink", "/logout");
+			template.addAttribute("perfilActivo", "active");
+			template.addAttribute("nombrePerfil", result.getString("username"));
+			template.addAttribute("emailPerfil", result.getString("email"));
+			template.addAttribute("listaAportes",listaAportes);
+			return "aportes";
+		}else
+		{
+			template.addAttribute("login", "Login");
+			template.addAttribute("registro", "Registrarse");
+			template.addAttribute("loginLink", "/login");
+			template.addAttribute("registroLink", "registro");
+			return "redirect:/login";
+		}
+		// Fin de Autentificacion
+		
+	}
+	
 	@GetMapping("/añadir")
 	public static String PaginaAñadir(Model template,HttpServletRequest request) throws SQLException
 	{
@@ -720,7 +771,8 @@ public class PrimerController
 	public static String procesarAñadir(@RequestParam String cancionNombre,
 										@RequestParam String tipo,
 										@RequestParam String anime, HttpServletRequest request,
-										@RequestParam String banda, Model template) throws SQLException
+										@RequestParam String banda, Model template,
+										@RequestParam int numeroTipo) throws SQLException
 	{
 		boolean correctCancion = true, correctTipo = true, correctAnime = true, correctBanda = true;
 		Connection connection = DriverManager.getConnection(Settings.db_url, Settings.db_user, Settings.db_password);
@@ -764,9 +816,16 @@ public class PrimerController
 			}
 			if(correctAnime && correctBanda && correctCancion && correctTipo)
 			{
+				String tipo2 = tipo + numeroTipo;
 				PreparedStatement añadir = connection.prepareStatement("INSERT INTO canciones(nombre,tipo,banda,anime,usuario) VALUES(?,?,?,?,?);");
 				añadir.setString(1, cancionNombre);
-				añadir.setString(2, tipo);
+				if(tipo.equals("OST"))
+				{
+					añadir.setString(2, tipo);
+				}else
+				{
+					añadir.setString(2, tipo2);
+				}
 				añadir.setString(3, banda);
 				añadir.setString(4, anime);
 				nombreUsuario = result.getString("username");

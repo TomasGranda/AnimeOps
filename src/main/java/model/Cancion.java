@@ -9,8 +9,9 @@ public class Cancion {
 	String anime;
 	int descargas;
 	String usuario;
+	int codigo;
 	
-	public Cancion(int id, String nombre, String tipo, String banda, String anime, int descargas,String us) 
+	public Cancion(int id, String nombre, String tipo, String banda, String anime, int descargas,String us, int c) 
 	{
 		this.id = id;
 		this.nombre = nombre;
@@ -19,8 +20,17 @@ public class Cancion {
 		this.anime = anime;
 		this.descargas = descargas;
 		this.usuario = us;
+		this.codigo = c;
 	}
 
+	public int getCodigo() {
+		return codigo;
+	}
+	
+	public void setCodigo(int codigo) {
+		this.codigo = codigo;
+	}
+	
 	public String getUsuario() {
 		return usuario;
 	}

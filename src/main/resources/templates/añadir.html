@@ -31,6 +31,9 @@
 				        	<option value="ED">Ending</option>
 				        	<option value="OST">OST	</option>
 				        </select>
+				        <p th:classappend="${errorNumero}" th:text="${mensajeErrorNumero}"></p>
+				        <p>Numero de OP/ED (En caso de ser OST ignorar este campo)</p>
+				        <input type="number" min="1" width="2" max="99" name="numeroTipo" value="1"></input>
 				        <p></p>
 				      </div>
 				    </div>
