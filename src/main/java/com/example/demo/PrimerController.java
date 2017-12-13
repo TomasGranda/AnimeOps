@@ -134,7 +134,7 @@ public class PrimerController
 		if(autentificacion(request,template) && result.next())
 		{
 			nombreUsuario = result.getString("username");
-			template.addAttribute("login", "Bienvenido, " + nombreUsuario);
+			template.addAttribute("login", "Bienvenido/a, " + nombreUsuario);
 			template.addAttribute("registro", "Logout");
 			template.addAttribute("loginLink", "/cuenta");
 			template.addAttribute("registroLink", "/logout");
@@ -258,7 +258,7 @@ public class PrimerController
 		if(autentificacion(request,template) && result.next())
 		{
 			nombreUsuario = result.getString("username");
-			template.addAttribute("login", "Bienvenido, " + nombreUsuario);
+			template.addAttribute("login", "Bienvenido/a, " + nombreUsuario);
 			template.addAttribute("registro", "Logout");
 			template.addAttribute("loginLink", "/cuenta");
 			template.addAttribute("registroLink", "/logout");
@@ -405,7 +405,7 @@ public class PrimerController
 		if(autentificacion(request,template) && result.next())
 		{
 			nombreUsuario = result.getString("username");
-			template.addAttribute("login", "Bienvenido, " + nombreUsuario);
+			template.addAttribute("login", "Bienvenido/a, " + nombreUsuario);
 			template.addAttribute("registro", "Logout");
 			template.addAttribute("loginLink", "/cuenta");
 			template.addAttribute("registroLink", "/logout");
@@ -459,7 +459,7 @@ public class PrimerController
 				if(autentificacion(request,template) && result2.next())
 				{
 					nombreUsuario = result2.getString("username");
-					template.addAttribute("login", "Bienvenido, " + nombreUsuario);
+					template.addAttribute("login", "Bienvenido/a, " + nombreUsuario);
 					template.addAttribute("registro", "Logout");
 					template.addAttribute("loginLink", "/cuenta");
 					template.addAttribute("registroLink", "/logout");
@@ -742,7 +742,7 @@ public class PrimerController
 				if(autentificacion(request,template) && result.next())
 				{
 					nombreUsuario = result.getString("username");
-					template.addAttribute("login", "Bienvenido, " + nombreUsuario);
+					template.addAttribute("login", "Bienvenido/a, " + nombreUsuario);
 					template.addAttribute("registro", "Logout");
 					template.addAttribute("loginLink", "/cuenta");
 					template.addAttribute("registroLink", "/logout");
@@ -779,7 +779,7 @@ public class PrimerController
 		if(autentificacion(request,template) && result.next())
 		{
 			nombreUsuario = result.getString("username");
-			template.addAttribute("login", "Bienvenido, " + nombreUsuario);
+			template.addAttribute("login", "Bienvenido/a, " + nombreUsuario);
 			template.addAttribute("registro", "Logout");
 			template.addAttribute("loginLink", "/cuenta");
 			template.addAttribute("registroLink", "/logout");
@@ -812,7 +812,7 @@ public class PrimerController
 		if(autentificacion(request,template) && result.next())
 		{
 			nombreUsuario = result.getString("username");
-			template.addAttribute("login", "Bienvenido, " + nombreUsuario);
+			template.addAttribute("login", "Bienvenido/a, " + nombreUsuario);
 			template.addAttribute("registro", "Logout");
 			template.addAttribute("loginLink", "/cuenta");
 			template.addAttribute("registroLink", "/logout");
@@ -854,7 +854,7 @@ public class PrimerController
 		{
 			nombreUsuario2 = resultado.getString("usuario");
 			nombreUsuario = result.getString("username");
-			template.addAttribute("login", "Bienvenido, " + nombreUsuario);
+			template.addAttribute("login", "Bienvenido/a, " + nombreUsuario);
 			template.addAttribute("registro", "Logout");
 			template.addAttribute("loginLink", "/cuenta");
 			template.addAttribute("registroLink", "/logout");
@@ -912,7 +912,7 @@ public class PrimerController
 						resultado.getString("usuario"), resultado.getString("url"));
 				listaAportes.add(cancionAux);
 			}
-			template.addAttribute("login", "Bienvenido, " + nombreUsuario);
+			template.addAttribute("login", "Bienvenido/a, " + nombreUsuario);
 			template.addAttribute("registro", "Logout");
 			template.addAttribute("loginLink", "/cuenta");
 			template.addAttribute("registroLink", "/logout");
@@ -971,7 +971,7 @@ public class PrimerController
 		if(autentificacion(request,template) && result.next())
 		{
 			nombreUsuario = result.getString("username");
-			template.addAttribute("login", "Bienvenido, " + nombreUsuario);
+			template.addAttribute("login", "Bienvenido/a, " + nombreUsuario);
 			template.addAttribute("registro", "Logout");
 			template.addAttribute("loginLink", "/cuenta");
 			template.addAttribute("registroLink", "/logout");
@@ -998,7 +998,7 @@ public class PrimerController
 		if(autentificacion(request,template) && result.next())
 		{
 			nombreUsuario = result.getString("username");
-			template.addAttribute("login", "Bienvenido, " + nombreUsuario);
+			template.addAttribute("login", "Bienvenido/a, " + nombreUsuario);
 			template.addAttribute("registro", "Logout");
 			template.addAttribute("loginLink", "/cuenta");
 			template.addAttribute("registroLink", "/logout");
@@ -1057,7 +1057,7 @@ public class PrimerController
 			else
 			{
 				nombreUsuario = resultado.getString("username");
-				template.addAttribute("login", "Bienvenido, " + nombreUsuario);
+				template.addAttribute("login", "Bienvenido/a, " + nombreUsuario);
 				template.addAttribute("registro", "Logout");
 				template.addAttribute("loginLink", "/cuenta");
 				template.addAttribute("registroLink", "/logout");
