@@ -9,11 +9,10 @@ public class Cancion {
 	String anime;
 	int descargas;
 	String usuario;
-	int codigo;
 	String url;
 	
 	public Cancion(int id, String nombre, String tipo, 
-			String banda, String anime, int descargas,String us, int c, String u) 
+			String banda, String anime, int descargas,String us, String u) 
 	{
 		this.id = id;
 		this.nombre = nombre;
@@ -22,7 +21,6 @@ public class Cancion {
 		this.anime = anime;
 		this.descargas = descargas;
 		this.usuario = us;
-		this.codigo = c;
 		this.url = u;
 	}
 
@@ -32,14 +30,6 @@ public class Cancion {
 	
 	public void setUrl(String url) {
 		this.url = url;
-	}
-	
-	public int getCodigo() {
-		return codigo;
-	}
-	
-	public void setCodigo(int codigo) {
-		this.codigo = codigo;
 	}
 	
 	public String getUsuario() {

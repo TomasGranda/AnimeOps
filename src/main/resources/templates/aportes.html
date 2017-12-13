@@ -33,6 +33,8 @@
 							<th>Tipo</th>
 							<th>Banda</th>
 							<th>Descargas</th>
+							<th style="text-align: center;">D</th>
+							<th style="text-align: center;">B</th>
 						</tr>
 						<tr th:each="cancion : ${listaAportes}">
 							<td th:text="${cancion.nombre}"></td>
@@ -40,8 +42,11 @@
 							<td th:text="${cancion.tipo}"></td>
 							<td th:text="${cancion.banda}"></td>
 							<td th:text="${cancion.descargas}" style="width:1%;"></td>
+							<td style="width:3%;"><a th:href="'/canciones/' + ${cancion.id}"><img src="/img/descarga.png" style="width:100%"></img></a></td>
+							<td style="width:3%;"><a onClick="alert('Esta Seguro de que desea eliminar esa Cancion?')" th:href="'/borrar/' + ${cancion.id}"><img src="/img/delete.png" style="width:100%"></img></a></td>
 						</tr>
 					</table>
+					<p type="hidden"></p>
 				</div>
 			</div>
 		</span>

@@ -72,22 +72,17 @@
 				      </div>
 				    </div>
 				    
-				    <div class="control-group">
+				    <div class="control-group" style="float:left;">
 				      <!-- Archivo -->
 				      <label class="control-label"  for="banda">Archivo de Subtitulos</label>
 				      <div class="controls">
 				  	    <p th:classappend="${errorArchivo}" th:text="${mensajeErrorArchivo}"></p>    
 				        <input id="inputUrlImagen" name="url" type="hidden" placeholder="Url Imagen"></input>
-						<button id="botonSubirImagen" type="button">Subir Archivo</button>
+						<button id="botonSubirImagen" class="btn btn-success" type="button">Subir Archivo</button>
+				 		<button class="btn btn-success">Enviar...</button>
 				 		<p></p>
 				 		<br></br>
 				        <p class="help-block"></p>
-				      </div>
-				    </div>
-				    <div class="control-group">
-				      <!-- Button -->
-				      <div class="controls">
-				        <button class="btn btn-success">A&ntilde;adir Cancion</button>
 				      </div>
 				    </div>
 				  </fieldset>

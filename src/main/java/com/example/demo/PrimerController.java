@@ -274,6 +274,29 @@ public class PrimerController
 		return "animeDelID";
 	}
 	
+	@GetMapping("/canciones/{idCancion}")
+	public static String descargarCancion(@PathVariable int idCancion) throws SQLException
+	{
+		Connection connection;
+		String url = "/error";
+		int descargas = 0;
+		connection = DriverManager.getConnection(Settings.db_url, Settings.db_user, Settings.db_password);
+		PreparedStatement ps = connection.prepareStatement("SELECT * FROM canciones WHERE id=?;");
+		ps.setInt(1, idCancion);
+		ResultSet resultado = ps.executeQuery();
+		if(resultado.next())
+		{
+			url = resultado.getString("url");
+			descargas = resultado.getInt("descargas");
+			descargas++;
+			ps = connection.prepareStatement("UPDATE canciones SET descargas=? WHERE id=?;");
+			ps.setInt(1, descargas);
+			ps.setInt(2, idCancion);
+			ps.executeUpdate();
+		}
+		return "redirect:" + url;
+	}
+	
 	@GetMapping("/animes/{idAnime}/{tipoCodigo}")
 	public static String cancionDelID(@PathVariable int idAnime, Model template,
 									  @PathVariable String tipoCodigo,
@@ -349,7 +372,7 @@ public class PrimerController
 			listaCanciones.add(resultado2.getString("tipo"));
 		}
 		
-		ps = connection.prepareStatement("SELECT * FROM canciones WHERE tipo=? AND anime=?;");
+		ps = connection.prepareStatement("SELECT * FROM canciones WHERE tipo=? AND anime=? ORDER BY descargas DESC;");
 		ps.setString(1, tipoCodigo);
 		ps.setString(2, animeDelID.getNombre());
 		resultado2 = ps.executeQuery();
@@ -361,7 +384,7 @@ public class PrimerController
 			cancionAux = new Cancion(resultado2.getInt("id"), resultado2.getString("nombre"),
 					resultado2.getString("tipo"), resultado2.getString("banda"),
 					resultado2.getString("anime"), resultado2.getInt("descargas"),
-					resultado2.getString("usuario"), resultado2.getInt("codigo"), resultado2.getString("url"));
+					resultado2.getString("usuario"), resultado2.getString("url"));
 			
 			listaAportes.add(cancionAux);
 		}
@@ -807,6 +830,57 @@ public class PrimerController
 		// Fin de Autentificacion
 	}
 	
+	@GetMapping("/borrar/{cancionID}")
+	public static String borrarCancion(@PathVariable int cancionID, HttpServletRequest request, Model template) throws SQLException
+	{
+		Connection connection;
+		connection = DriverManager.getConnection(Settings.db_url, Settings.db_user, Settings.db_password);
+		
+		//Login Autentificacion
+		template.addAttribute("Text", "text-align: center; font-size: 20px;");
+		HttpSession session = request.getSession();
+		String numeroSession = (String) session.getAttribute("session");
+		String nombreUsuario,nombreUsuario2;
+		PreparedStatement ps2 = connection.prepareStatement("SELECT * FROM usuarios WHERE session=?;");
+		ps2.setString(1, numeroSession);
+		ResultSet result = ps2.executeQuery();
+		PreparedStatement ps = connection.prepareStatement("DELETE FROM canciones WHERE id=?;");
+		ps.setInt(1, cancionID);
+		PreparedStatement ps3 = connection.prepareStatement("SELECT * FROM canciones WHERE id=?;");
+		ps3.setInt(1, cancionID);
+		ResultSet resultado = ps3.executeQuery();
+		if(autentificacion(request,template) && result.next() && resultado.next())
+		{
+			nombreUsuario2 = resultado.getString("usuario");
+			nombreUsuario = result.getString("username");
+			template.addAttribute("login", "Bienvenido, " + nombreUsuario);
+			template.addAttribute("registro", "Logout");
+			template.addAttribute("loginLink", "/editar");
+			template.addAttribute("registroLink", "/logout");
+			template.addAttribute("perfilActivo", "active");
+			template.addAttribute("nombrePerfil", result.getString("username"));
+			template.addAttribute("emailPerfil", result.getString("email"));
+			
+			if(nombreUsuario.equals(nombreUsuario2))
+			{
+				ps.executeUpdate();
+				return "redirect:/cuenta/aportes";
+			}else
+			{
+				return "redirect:/";
+			}
+		}else
+		{
+			template.addAttribute("login", "Login");
+			template.addAttribute("registro", "Registrarse");
+			template.addAttribute("loginLink", "/login");
+			template.addAttribute("registroLink", "registro");
+			return "redirect:/login";
+		}
+		// Fin de Autentificacion
+		
+	}
+	
 	@GetMapping("/cuenta/aportes")
 	public static String paginaCuentaAportes(Model template, HttpServletRequest request) throws SQLException
 	{
@@ -825,7 +899,7 @@ public class PrimerController
 			nombreUsuario = result.getString("username");
 			ArrayList<Cancion> listaAportes;
 			listaAportes = new ArrayList<Cancion>();
-			PreparedStatement ps = connection.prepareStatement("SELECT * FROM canciones WHERE usuario=?");
+			PreparedStatement ps = connection.prepareStatement("SELECT * FROM canciones WHERE usuario=? ORDER BY anime;");
 			ps.setString(1, nombreUsuario);
 			ResultSet resultado = ps.executeQuery();
 			Cancion cancionAux;
@@ -834,7 +908,7 @@ public class PrimerController
 				cancionAux = new Cancion(resultado.getInt("id"), resultado.getString("nombre"),
 						resultado.getString("tipo"), resultado.getString("banda"),
 						resultado.getString("anime"), resultado.getInt("descargas"),
-						resultado.getString("usuario"), resultado.getInt("codigo"), resultado.getString("url"));
+						resultado.getString("usuario"), resultado.getString("url"));
 				listaAportes.add(cancionAux);
 			}
 			template.addAttribute("login", "Bienvenido, " + nombreUsuario);
@@ -916,7 +990,7 @@ public class PrimerController
 										@RequestParam int numeroTipo,
 										@RequestParam String url) throws SQLException
 	{
-		boolean correctCancion = true, correctTipo = true, correctAnime = true, correctBanda = true;
+		boolean correctCancion = true, archivo = true, correctTipo = true, correctAnime = true, correctBanda = true;
 		Connection connection = DriverManager.getConnection(Settings.db_url, Settings.db_user, Settings.db_password);
 		//Login Autentificacion	
 		HttpSession session = request.getSession();
@@ -927,6 +1001,12 @@ public class PrimerController
 		ResultSet result = ps2.executeQuery();
 		if(autentificacion(request,template) && result.next())
 		{
+			if(url.isEmpty())
+			{
+				archivo = false;
+				template.addAttribute("mensajeErrorArchivo", "Error: Debe Seleccionar un archivo haciendo click en \"Subir Archivo\"");
+				template.addAttribute("errorArchivo","alert alert-danger small");
+			}
 			if(cancionNombre.isEmpty())
 			{
 				correctCancion = false;
@@ -956,7 +1036,7 @@ public class PrimerController
 				template.addAttribute("nombreAnterior", cancionNombre);
 				
 			}
-			if(correctAnime && correctBanda && correctCancion && correctTipo)
+			if(correctAnime && correctBanda && correctCancion && correctTipo && archivo)
 			{
 				String tipo2 = tipo + numeroTipo;
 				PreparedStatement añadir = connection.prepareStatement("INSERT INTO canciones(nombre,tipo,banda,anime,usuario,url) VALUES(?,?,?,?,?,?);");
