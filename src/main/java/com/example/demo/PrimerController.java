@@ -480,6 +480,7 @@ public class PrimerController
 		}
 		else
 		{
+			template.addAttribute("busqueda", busqueda);
 			return "busquedaResultadoVacio";
 		}
 	}
