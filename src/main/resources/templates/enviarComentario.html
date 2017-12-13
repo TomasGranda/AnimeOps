@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="layout">
+	
+			<div class="col" layout:fragment="contenido">
+				<form action="/enviarComentario" method="POST">
+					<input name="nombre" type="hidden" value="hola"></input>
+					<input name="email" type="hidden" value="hola"></input>
+					<h3>Envianos un Comentario o sugerencia:</h3>
+					<p>Mensaje</p>
+					<p th:classappend="${errorSugerencia}" th:text="${mensajeErrorSugerencia}"></p>
+					<TEXTAREA rows="5" th:value="${antesSugerencia}" cols="50" name="sugerencia" placeholder="Sus sugerencias aqui..."></TEXTAREA>
+					<input type="hidden" name="identificador" value="Z87X09RF"></input>
+					<p>Categoria</p>
+					<p th:classappend="${errorCategoria}" th:text="${mensajeErrorCategoria}"></p>
+					<select name="categoria">
+						<option value="error">--Selecciones una Categoria--</option>
+						<option value="sugerenciaAnime">Sugerir un Anime</option>
+						<option value="comentario">Comentario</option>
+						<option value="bugReport">Reportar un Error</option>
+						<option value="reportarCancion">Reportar una Cancion</option>
+						<option value="otros">Otros...</option>
+					</select>
+					<input type="submit" value="Enviar..." class="btn btn-info"></input>
+				</form>
+			</div>
+</html>

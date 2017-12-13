@@ -136,7 +136,7 @@ public class PrimerController
 			nombreUsuario = result.getString("username");
 			template.addAttribute("login", "Bienvenido, " + nombreUsuario);
 			template.addAttribute("registro", "Logout");
-			template.addAttribute("loginLink", "/editar");
+			template.addAttribute("loginLink", "/cuenta");
 			template.addAttribute("registroLink", "/logout");
 		}else
 		{
@@ -260,7 +260,7 @@ public class PrimerController
 			nombreUsuario = result.getString("username");
 			template.addAttribute("login", "Bienvenido, " + nombreUsuario);
 			template.addAttribute("registro", "Logout");
-			template.addAttribute("loginLink", "/editar");
+			template.addAttribute("loginLink", "/cuenta");
 			template.addAttribute("registroLink", "/logout");
 		}else
 		{
@@ -407,7 +407,7 @@ public class PrimerController
 			nombreUsuario = result.getString("username");
 			template.addAttribute("login", "Bienvenido, " + nombreUsuario);
 			template.addAttribute("registro", "Logout");
-			template.addAttribute("loginLink", "/editar");
+			template.addAttribute("loginLink", "/cuenta");
 			template.addAttribute("registroLink", "/logout");
 		}else
 		{
@@ -461,7 +461,7 @@ public class PrimerController
 					nombreUsuario = result2.getString("username");
 					template.addAttribute("login", "Bienvenido, " + nombreUsuario);
 					template.addAttribute("registro", "Logout");
-					template.addAttribute("loginLink", "/editar");
+					template.addAttribute("loginLink", "/cuenta");
 					template.addAttribute("registroLink", "/logout");
 				}else
 				{
@@ -743,7 +743,7 @@ public class PrimerController
 					nombreUsuario = result.getString("username");
 					template.addAttribute("login", "Bienvenido, " + nombreUsuario);
 					template.addAttribute("registro", "Logout");
-					template.addAttribute("loginLink", "/editar");
+					template.addAttribute("loginLink", "/cuenta");
 					template.addAttribute("registroLink", "/logout");
 				}else
 				{
@@ -780,7 +780,7 @@ public class PrimerController
 			nombreUsuario = result.getString("username");
 			template.addAttribute("login", "Bienvenido, " + nombreUsuario);
 			template.addAttribute("registro", "Logout");
-			template.addAttribute("loginLink", "/editar");
+			template.addAttribute("loginLink", "/cuenta");
 			template.addAttribute("registroLink", "/logout");
 			return "cuenta";
 		}else
@@ -813,7 +813,7 @@ public class PrimerController
 			nombreUsuario = result.getString("username");
 			template.addAttribute("login", "Bienvenido, " + nombreUsuario);
 			template.addAttribute("registro", "Logout");
-			template.addAttribute("loginLink", "/editar");
+			template.addAttribute("loginLink", "/cuenta");
 			template.addAttribute("registroLink", "/logout");
 			template.addAttribute("perfilActivo", "active");
 			template.addAttribute("nombrePerfil", result.getString("username"));
@@ -855,7 +855,7 @@ public class PrimerController
 			nombreUsuario = result.getString("username");
 			template.addAttribute("login", "Bienvenido, " + nombreUsuario);
 			template.addAttribute("registro", "Logout");
-			template.addAttribute("loginLink", "/editar");
+			template.addAttribute("loginLink", "/cuenta");
 			template.addAttribute("registroLink", "/logout");
 			template.addAttribute("perfilActivo", "active");
 			template.addAttribute("nombrePerfil", result.getString("username"));
@@ -913,7 +913,7 @@ public class PrimerController
 			}
 			template.addAttribute("login", "Bienvenido, " + nombreUsuario);
 			template.addAttribute("registro", "Logout");
-			template.addAttribute("loginLink", "/editar");
+			template.addAttribute("loginLink", "/cuenta");
 			template.addAttribute("registroLink", "/logout");
 			template.addAttribute("perfilActivo", "active");
 			template.addAttribute("nombrePerfil", result.getString("username"));
@@ -972,7 +972,7 @@ public class PrimerController
 			nombreUsuario = result.getString("username");
 			template.addAttribute("login", "Bienvenido, " + nombreUsuario);
 			template.addAttribute("registro", "Logout");
-			template.addAttribute("loginLink", "/editar");
+			template.addAttribute("loginLink", "/cuenta");
 			template.addAttribute("registroLink", "/logout");
 			return "añadir";
 		}else
@@ -980,6 +980,136 @@ public class PrimerController
 			return "redirect:/login";
 		}
 		// Fin de Autentificacion
+	}
+	
+	@GetMapping("/enviarComentario")
+	public static String enviarComentario(HttpServletRequest request, Model template) throws SQLException
+	{
+		Connection connection;
+		connection = DriverManager.getConnection(Settings.db_url, Settings.db_user, Settings.db_password);
+		//Login Autentificacion
+		HttpSession session = request.getSession();
+		String numeroSession = (String) session.getAttribute("session");
+		String nombreUsuario;
+		PreparedStatement ps2 = connection.prepareStatement("SELECT * FROM usuarios WHERE session=?;");
+		ps2.setString(1, numeroSession);
+		ResultSet result = ps2.executeQuery();
+		if(autentificacion(request,template) && result.next())
+		{
+			nombreUsuario = result.getString("username");
+			template.addAttribute("login", "Bienvenido, " + nombreUsuario);
+			template.addAttribute("registro", "Logout");
+			template.addAttribute("loginLink", "/cuenta");
+			template.addAttribute("registroLink", "/logout");
+			template.addAttribute("Text", "text-align: center; font-size: 20px;");
+			return "enviarComentario";
+		}else
+		{
+			return "enviarComentarioSinLoguear";
+		}
+		// Fin de Autentificacion	
+	}
+	
+	@PostMapping("/enviarComentario")
+	public static String enviarComentarioProceso(@RequestParam String sugerencia,
+												 @RequestParam String categoria, 
+												 @RequestParam String nombre,
+												 @RequestParam String email,
+												 HttpServletRequest request,
+												 Model template) throws SQLException
+	{
+		HttpSession session = request.getSession();
+		boolean cNombre = true, cSugerencia = true, cCategoria = true;
+		Connection connection;
+		String numeroSession = (String) session.getAttribute("session"),nombreUsuario,emailUsuario;
+		connection = DriverManager.getConnection(Settings.db_url, Settings.db_user, Settings.db_password);
+		PreparedStatement ps = connection.prepareStatement("SELECT * FROM usuarios WHERE session=?;");
+		ps.setString(1, numeroSession);
+		ResultSet resultado = ps.executeQuery();
+		ps = connection.prepareStatement("INSERT INTO mensajes(usuario,categoria,sugerencia,email) VALUES(?,?,?,?)");
+		if(resultado.next())
+		{
+			if(sugerencia.isEmpty())
+			{
+				cSugerencia = false;
+				template.addAttribute("mensajeErrorSugerencia","Error: Escriba un Mensaje");
+				template.addAttribute("errorSugerencia","alert alert-danger small");
+			}
+			if(categoria.equals("error"))
+			{
+				cCategoria = false;
+				template.addAttribute("mensajeErrorCategoria","Error: Eliga una Categoria");
+				template.addAttribute("errorCategoria","alert alert-danger small");
+				template.addAttribute("antesSugerencia",sugerencia);
+			}
+			if(cCategoria && cSugerencia)
+			{
+				nombreUsuario = resultado.getString("username");
+				emailUsuario = resultado.getString("email");
+				ps.setString(1, nombreUsuario);
+				ps.setString(2, categoria);
+				ps.setString(3, sugerencia);
+				ps.setString(4, emailUsuario);
+				ps.executeUpdate();
+				return "redirect:/";
+			}
+			else
+			{
+				nombreUsuario = resultado.getString("username");
+				template.addAttribute("login", "Bienvenido, " + nombreUsuario);
+				template.addAttribute("registro", "Logout");
+				template.addAttribute("loginLink", "/cuenta");
+				template.addAttribute("registroLink", "/logout");
+				template.addAttribute("Text", "text-align: center; font-size: 20px;");
+				return "enviarComentario";
+			}
+			
+		}else
+		{
+			if(nombre.isEmpty())
+			{
+				cNombre = false;
+				template.addAttribute("mensajeErrorNombre","Error: Coloque un Nombre");
+				template.addAttribute("errorNombre","alert alert-danger small");
+				template.addAttribute("antesEmail",email);
+				template.addAttribute("antesSugerencia",sugerencia);
+			}
+			if(sugerencia.isEmpty())
+			{
+				cSugerencia = false;
+				template.addAttribute("mensajeErrorSugerencia","Error: Escriba un Mensaje");
+				template.addAttribute("errorSugerencia","alert alert-danger small");
+				template.addAttribute("antesNombre",nombre);
+				template.addAttribute("antesEmail",email);
+			}
+			if(categoria.equals("error"))
+			{
+				cCategoria = false;
+				template.addAttribute("mensajeErrorCategoria","Error: Eliga una Categoria");
+				template.addAttribute("errorCategoria","alert alert-danger small");
+				template.addAttribute("antesNombre",nombre);
+				template.addAttribute("antesEmail",email);
+				template.addAttribute("antesSugerencia",sugerencia);
+			}
+			
+			if(cCategoria && cNombre && cSugerencia)
+			{
+				ps.setString(1, nombre + " (No registrado)");
+				ps.setString(2, categoria);
+				ps.setString(3, sugerencia);
+				if(email.isEmpty())
+				{
+					email = "(No especificado)";
+				}
+				ps.setString(4, email);
+				ps.executeUpdate();
+				return "redirect:/";
+			}
+			else
+			{
+				return "enviarComentarioSinLoguear";
+			}
+		}
 	}
 	
 	@PostMapping("/añadir")
