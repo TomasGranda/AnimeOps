@@ -10,8 +10,10 @@ public class Cancion {
 	int descargas;
 	String usuario;
 	int codigo;
+	String url;
 	
-	public Cancion(int id, String nombre, String tipo, String banda, String anime, int descargas,String us, int c) 
+	public Cancion(int id, String nombre, String tipo, 
+			String banda, String anime, int descargas,String us, int c, String u) 
 	{
 		this.id = id;
 		this.nombre = nombre;
@@ -21,8 +23,17 @@ public class Cancion {
 		this.descargas = descargas;
 		this.usuario = us;
 		this.codigo = c;
+		this.url = u;
 	}
 
+	public String getUrl() {
+		return url;
+	}
+	
+	public void setUrl(String url) {
+		this.url = url;
+	}
+	
 	public int getCodigo() {
 		return codigo;
 	}

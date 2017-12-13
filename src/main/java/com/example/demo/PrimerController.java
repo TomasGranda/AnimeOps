@@ -173,8 +173,7 @@ public class PrimerController
 	{
 		int v;
 		String titulo;
-		Cancion cancionAux;
-		ArrayList<Cancion> listaCanciones = new ArrayList<>();
+		ArrayList<String> listaCanciones = new ArrayList<>();
 		Connection connection;
 		connection = DriverManager.getConnection(Settings.db_url, Settings.db_user, Settings.db_password);
 		PreparedStatement ps = connection.prepareStatement("SELECT * FROM animes WHERE id=?;");
@@ -213,19 +212,32 @@ public class PrimerController
 		ps.setInt(2, animeDelID.getId());
 		ps.executeUpdate();
 		
-		ps = connection.prepareStatement("SELECT * FROM canciones WHERE anime=?;");
+		ps = connection.prepareStatement("SELECT tipo FROM canciones WHERE anime=? AND tipo LIKE 'OP%' GROUP BY tipo;");
 		ps.setString(1, animeDelID.getNombre());
-		
 		resultado2 = ps.executeQuery();
 		
 		while(resultado2.next())
 		{
-			cancionAux = new Cancion(resultado2.getInt("id"), resultado2.getString("nombre"),
-									resultado2.getString("tipo"), resultado2.getString("banda"),
-									resultado2.getString("anime"), resultado2.getInt("descargas"),
-									resultado2.getString("usuario"), resultado2.getInt("codigo"));
-			listaCanciones.add(cancionAux);
-			
+			listaCanciones.add(resultado2.getString("tipo"));
+		}
+		
+		ps = connection.prepareStatement("SELECT tipo FROM canciones WHERE anime=? AND tipo LIKE 'ED%' GROUP BY tipo;");
+		ps.setString(1, animeDelID.getNombre());
+		resultado2 = ps.executeQuery();
+		
+		while(resultado2.next())
+		{
+			listaCanciones.add(resultado2.getString("tipo"));
+		}
+		
+		
+		ps = connection.prepareStatement("SELECT tipo FROM canciones WHERE anime=? AND tipo LIKE 'OST' GROUP BY tipo;");
+		ps.setString(1, animeDelID.getNombre());
+		resultado2 = ps.executeQuery();
+		
+		if(resultado2.next())
+		{
+			listaCanciones.add(resultado2.getString("tipo"));
 		}
 		
 		// TODO : Crear metodo y template especial para cada cacion mostrando 
@@ -260,6 +272,130 @@ public class PrimerController
 		// Fin de Autentificacion
 		
 		return "animeDelID";
+	}
+	
+	@GetMapping("/animes/{idAnime}/{tipoCodigo}")
+	public static String cancionDelID(@PathVariable int idAnime, Model template,
+									  @PathVariable String tipoCodigo,
+									  HttpServletRequest request) throws SQLException
+	{
+		int v;
+		String titulo;
+		ArrayList<String> listaCanciones = new ArrayList<>();
+		ArrayList<Cancion> listaAportes;
+		Cancion cancionAux;
+		Connection connection;
+		connection = DriverManager.getConnection(Settings.db_url, Settings.db_user, Settings.db_password);
+		PreparedStatement ps = connection.prepareStatement("SELECT * FROM animes WHERE id=?;");
+		ps.setInt(1, idAnime);
+		ResultSet resultado = ps.executeQuery();
+		ResultSet resultado2;
+		resultado.next();
+		Anime animeDelID = new Anime(	resultado.getInt("id"),
+				resultado.getString("nombre"),
+				resultado.getString("sinopsis"),
+				resultado.getString("genero1"),
+				resultado.getString("genero2"),
+				resultado.getString("genero3"),
+				resultado.getString("tipo"),
+				resultado.getString("imagen"),
+				resultado.getInt("visitas"));
+		titulo = animeDelID.getNombre();
+		if(animeDelID.getGenero2() == null)
+		{
+			animeDelID.setGenero2("");
+		}
+		else {
+			animeDelID.setGenero2(", " + animeDelID.getGenero2());
+		}
+		if(animeDelID.getGenero3() == null)
+		{
+			animeDelID.setGenero3("");
+		}
+		else {
+			animeDelID.setGenero3(", " + animeDelID.getGenero3());
+		}
+		
+		v = 1 + animeDelID.getVisitas();		
+		ps = connection.prepareStatement("UPDATE animes SET visitas=? WHERE id=?;");
+		ps.setInt(1, v);
+		ps.setInt(2, animeDelID.getId());
+		ps.executeUpdate();
+
+		ps = connection.prepareStatement("SELECT tipo FROM canciones WHERE anime=? AND tipo LIKE 'OP%' GROUP BY tipo;");
+		ps.setString(1, animeDelID.getNombre());
+		resultado2 = ps.executeQuery();
+		
+		while(resultado2.next())
+		{
+			listaCanciones.add(resultado2.getString("tipo"));
+		}
+		
+		ps = connection.prepareStatement("SELECT tipo FROM canciones WHERE anime=? AND tipo LIKE 'ED%' GROUP BY tipo;");
+		ps.setString(1, animeDelID.getNombre());
+		resultado2 = ps.executeQuery();
+		
+		while(resultado2.next())
+		{
+			listaCanciones.add(resultado2.getString("tipo"));
+		}
+		
+		ps = connection.prepareStatement("SELECT tipo FROM canciones WHERE anime=? AND tipo LIKE 'OST' GROUP BY tipo;");
+		ps.setString(1, animeDelID.getNombre());
+		resultado2 = ps.executeQuery();
+		
+		if(resultado2.next())
+		{
+			listaCanciones.add(resultado2.getString("tipo"));
+		}
+		
+		ps = connection.prepareStatement("SELECT * FROM canciones WHERE tipo=? AND anime=?;");
+		ps.setString(1, tipoCodigo);
+		ps.setString(2, animeDelID.getNombre());
+		resultado2 = ps.executeQuery();
+		
+		listaAportes = new ArrayList<>();
+		
+		while(resultado2.next())
+		{
+			cancionAux = new Cancion(resultado2.getInt("id"), resultado2.getString("nombre"),
+					resultado2.getString("tipo"), resultado2.getString("banda"),
+					resultado2.getString("anime"), resultado2.getInt("descargas"),
+					resultado2.getString("usuario"), resultado2.getInt("codigo"), resultado2.getString("url"));
+			
+			listaAportes.add(cancionAux);
+		}
+		
+		template.addAttribute("listaAportes", listaAportes);
+		template.addAttribute("archivo", animeDelID.getNombre() + " - ");
+		template.addAttribute("listaCanciones",listaCanciones);
+		template.addAttribute("titulo", titulo);
+		template.addAttribute("animeDelID", animeDelID);
+		
+		//Login Autentificacion
+		HttpSession session = request.getSession();
+		String numeroSession = (String) session.getAttribute("session");
+		String nombreUsuario;
+		PreparedStatement ps2 = connection.prepareStatement("SELECT * FROM usuarios WHERE session=?;");
+		ps2.setString(1, numeroSession);
+		ResultSet result = ps2.executeQuery();
+		if(autentificacion(request,template) && result.next())
+		{
+			nombreUsuario = result.getString("username");
+			template.addAttribute("login", "Bienvenido, " + nombreUsuario);
+			template.addAttribute("registro", "Logout");
+			template.addAttribute("loginLink", "/editar");
+			template.addAttribute("registroLink", "/logout");
+		}else
+		{
+			template.addAttribute("login", "Login");
+			template.addAttribute("registro", "Registrarse");
+			template.addAttribute("loginLink", "/login");
+			template.addAttribute("registroLink", "registro");
+		}
+		// Fin de Autentificacion
+		
+		return "cancionDelID";
 	}
 	
 	@PostMapping("/busqueda")
@@ -698,7 +834,7 @@ public class PrimerController
 				cancionAux = new Cancion(resultado.getInt("id"), resultado.getString("nombre"),
 						resultado.getString("tipo"), resultado.getString("banda"),
 						resultado.getString("anime"), resultado.getInt("descargas"),
-						resultado.getString("usuario"), resultado.getInt("codigo"));
+						resultado.getString("usuario"), resultado.getInt("codigo"), resultado.getString("url"));
 				listaAportes.add(cancionAux);
 			}
 			template.addAttribute("login", "Bienvenido, " + nombreUsuario);
@@ -777,7 +913,8 @@ public class PrimerController
 										@RequestParam String tipo,
 										@RequestParam String anime, HttpServletRequest request,
 										@RequestParam String banda, Model template,
-										@RequestParam int numeroTipo) throws SQLException
+										@RequestParam int numeroTipo,
+										@RequestParam String url) throws SQLException
 	{
 		boolean correctCancion = true, correctTipo = true, correctAnime = true, correctBanda = true;
 		Connection connection = DriverManager.getConnection(Settings.db_url, Settings.db_user, Settings.db_password);
@@ -822,7 +959,7 @@ public class PrimerController
 			if(correctAnime && correctBanda && correctCancion && correctTipo)
 			{
 				String tipo2 = tipo + numeroTipo;
-				PreparedStatement añadir = connection.prepareStatement("INSERT INTO canciones(nombre,tipo,banda,anime,usuario) VALUES(?,?,?,?,?);");
+				PreparedStatement añadir = connection.prepareStatement("INSERT INTO canciones(nombre,tipo,banda,anime,usuario,url) VALUES(?,?,?,?,?,?);");
 				añadir.setString(1, cancionNombre);
 				if(tipo.equals("OST"))
 				{
@@ -835,10 +972,32 @@ public class PrimerController
 				añadir.setString(4, anime);
 				nombreUsuario = result.getString("username");
 				añadir.setString(5, nombreUsuario);
+				añadir.setString(6, url);
 				añadir.executeUpdate();
 				return "redirect:/";
 			}else
 			{
+				PreparedStatement ps = connection.prepareStatement("SELECT * FROM animes ORDER BY nombre;");
+				ResultSet resultado = ps.executeQuery();
+				ArrayList<Anime> listaAnimes;
+				listaAnimes = new ArrayList<Anime>();
+				
+				while(resultado.next())
+				{
+					Anime miAnime = new Anime(	resultado.getInt("id"),
+							resultado.getString("nombre"),
+							resultado.getString("sinopsis"),
+							resultado.getString("genero1"),
+							resultado.getString("genero2"),
+							resultado.getString("genero3"),
+							resultado.getString("tipo"),
+							resultado.getString("imagen"),
+							resultado.getInt("visitas"));
+					listaAnimes.add(miAnime);
+				}
+				
+				template.addAttribute("listaanimes",listaAnimes);
+				
 				return "añadir";
 			}
 		}else

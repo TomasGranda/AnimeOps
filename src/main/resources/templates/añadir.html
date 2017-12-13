@@ -5,7 +5,14 @@
 	layout:decorator="layout">
 	
 	<head>
-		<script type="text/javascript" src="/js/tomas.js"></script>
+		<script type="text/javascript"
+			src="https://code.jquery.com/jquery-2.2.4.js"></script>
+		<script
+			src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+			integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+			crossorigin="anonymous"></script>
+		<script src="https://static.filestackapi.com/v3/filestack.js"></script>	
+		<script type="text/javascript" src="/js/funciones.js"></script>
 	</head>
 	<body>
 				<div class="col" layout:fragment="contenido">
@@ -70,12 +77,13 @@
 				      <label class="control-label"  for="banda">Archivo de Subtitulos</label>
 				      <div class="controls">
 				  	    <p th:classappend="${errorArchivo}" th:text="${mensajeErrorArchivo}"></p>    
-				        <input type="file" name="archive" accept=".sub, .txt, .ssa, .srt" class="input-xlarge"></input>
+				        <input id="inputUrlImagen" name="url" type="hidden" placeholder="Url Imagen"></input>
+						<button id="botonSubirImagen" type="button">Subir Archivo</button>
+				 		<p></p>
+				 		<br></br>
 				        <p class="help-block"></p>
 				      </div>
-				    </div> <!-- Terminar parte de server tambien -->
-				    
-				 
+				    </div>
 				    <div class="control-group">
 				      <!-- Button -->
 				      <div class="controls">

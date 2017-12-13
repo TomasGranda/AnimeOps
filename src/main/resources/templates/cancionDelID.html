@@ -28,12 +28,26 @@
 									<span th:each="string : ${listaCanciones}">
 										<a th:href="'/animes/' + ${animeDelID.id} + '/' + ${string}"><button th:text="${string}" type="button" class="btn btn-info"></button></a>
 									</span>
+									<a th:href="'/animes/' + ${animeDelID.id}"><button type="button" class="btn btn-info">Volver</button></a>
 								</div>
 							</div>
 							<div class="row">
 								<div class="col">
-									<h3>Sinopsis</h3>
-									<p th:text="${animeDelID.sinopsis}"></p>
+									<h3>Canciones Subidas</h3>
+									<table style="width:100%">
+										<tr>
+											<th>Nombre</th> 
+											<th>Banda</th>
+											<th>Subido por</th>
+											<th>Descargas</th>
+										</tr>
+										<tr th:each="cancion : ${listaAportes}">
+											<td th:text="${cancion.nombre}"></td>
+											<td th:text="${cancion.banda}"></td>
+											<td th:text="${cancion.usuario}"></td>
+											<td th:text="${cancion.descargas}" style="width:1%;"></td>
+										</tr>
+									</table>
 								</div>
 							</div>
 					
