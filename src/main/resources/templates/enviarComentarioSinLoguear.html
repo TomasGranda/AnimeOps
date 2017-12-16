@@ -14,7 +14,7 @@
 					<input th:value="${antesEmail}" type="email" name="email"></input>
 					<h3>Comentario o Sugerencia:</h3>
 					<p th:classappend="${errorSugerencia}" th:text="${mensajeErrorSugerencia}"></p>
-					<TEXTAREA rows="5" cols="50" th:value="${antesSugerencia}" name="sugerencia" placeholder="Sus sugerencias aqui..."></TEXTAREA>
+					<TEXTAREA rows="5" cols="50" th:value="${antesSugerencia}" type="text" name="sugerencia" placeholder="Sus sugerencias aqui..."></TEXTAREA>
 					<input type="hidden" name="identificador" value="Z87X09RF"></input>
 					<p>Categoria</p>
 					<p th:classappend="${errorCategoria}" th:text="${mensajeErrorCategoria}"></p>

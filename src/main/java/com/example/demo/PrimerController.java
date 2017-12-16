@@ -131,6 +131,7 @@ public class PrimerController
 		PreparedStatement ps2 = connection.prepareStatement("SELECT * FROM usuarios WHERE session=?;");
 		ps2.setString(1, numeroSession);
 		ResultSet result = ps2.executeQuery();
+		template.addAttribute("titulo", "AnimeOps");
 		if(autentificacion(request,template) && result.next())
 		{
 			nombreUsuario = result.getString("username");
@@ -418,11 +419,20 @@ public class PrimerController
 		}
 		// Fin de Autentificacion
 		
+		template.addAttribute("titulo", tipoCodigo + " - " + animeDelID.getNombre());
+		
 		return "cancionDelID";
 	}
 	
 	@PostMapping("/busqueda")
-	public static String paginaBusqueda(@RequestParam String busqueda,
+	public static String paginaRedirectBusqueda(@RequestParam String busqueda,
+										Model template, HttpServletRequest request)
+	{
+		return "redirect:/busqueda/" + busqueda;
+	}
+	
+	@GetMapping("/busqueda/{busqueda}")
+	public static String paginaBusqueda(@PathVariable String busqueda,
 										Model template, HttpServletRequest request) throws SQLException
 	{
 		boolean result = false;
@@ -476,49 +486,15 @@ public class PrimerController
 		{
 			template.addAttribute("busqueda", busqueda);
 			template.addAttribute("listaResultados", listaResultados);
+			template.addAttribute("titulo", "Resultados de: " + busqueda);
 			return "busquedaResultado";
 		}
 		else
 		{
 			template.addAttribute("busqueda", busqueda);
+			template.addAttribute("titulo", busqueda + " - No hay Resultados");
 			return "busquedaResultadoVacio";
 		}
-	}
-	
-	@GetMapping("/mensajes")
-	public static String paginaMensajes(Model template) throws SQLException
-	{
-		/*String mensajeNombre;
-		String mensajeEmail;
-		String mensajeComentario;
-		*/
-		Contacto contacto;
-		
-		Connection connection;
-		connection = DriverManager.getConnection(Settings.db_url, Settings.db_user, Settings.db_password);	
-		PreparedStatement ps = connection.prepareStatement("SELECT * FROM mensajes");
-		ResultSet resultado = ps.executeQuery();
-		ArrayList<Contacto> listaMensajes;
-		listaMensajes = new ArrayList<Contacto>();
-		
-		while(resultado.next())
-		{
-			contacto = new Contacto(resultado.getInt("id"), 
-					resultado.getString("nombre"),
-					resultado.getString("email"),
-					resultado.getString("comentario"));
-		/*	mensajeNombre = resultado.getString("nombre");
-			mensajeEmail = resultado.getString("email");
-			mensajeComentario = resultado.getString("comentario");
-			
-			*/
-			listaMensajes.add(contacto);
-		}
-		
-		template.addAttribute("listaMensajes", listaMensajes);
-		
-		
-		return "mensajesDeContacto";
 	}
 	
 	@GetMapping("/logout")
@@ -543,10 +519,9 @@ public class PrimerController
 	}
 	
 	@GetMapping("/registro")
-	public static String paginaRegistro()
+	public static String paginaRegistro(Model template)
 	{
-		
-		
+		template.addAttribute("titulo", "Registrarse");
 		return "registro";
 	}
 	
@@ -626,6 +601,7 @@ public class PrimerController
 		}
 		if(!correctUsername || !correctPassword || !correctEmail)
 		{
+			template.addAttribute("titulo", "Registrarse");
 			return "registro";
 		}else
 		{
@@ -659,8 +635,9 @@ public class PrimerController
 	}
 	
 	@GetMapping("/login")
-	public static String loginCuenta()
+	public static String loginCuenta(Model template)
 	{
+		template.addAttribute("titulo", "Login");
 		return "login";
 	}
 	
@@ -687,12 +664,14 @@ public class PrimerController
 			{
 				template.addAttribute("mensajeError","Error: Nombre y Contraseña no coinciden");
 				template.addAttribute("error","alert alert-danger small");
+				template.addAttribute("titulo", "Login");
 				return "login";
 			}
 		}else
 		{
 			template.addAttribute("mensajeError","Error: Nombre y Contraseña no coinciden");
 			template.addAttribute("error","alert alert-danger small");
+			template.addAttribute("titulo", "Login");
 			return "login";
 		}
 	}
@@ -755,7 +734,7 @@ public class PrimerController
 				}
 				// Fin de Autentificacion
 				
-		
+		template.addAttribute("titulo", "Todos los Animes");	
         return "animes";
 	}
 	
@@ -783,6 +762,7 @@ public class PrimerController
 			template.addAttribute("registro", "Logout");
 			template.addAttribute("loginLink", "/cuenta");
 			template.addAttribute("registroLink", "/logout");
+			template.addAttribute("titulo", "Tu Cuenta");
 			return "cuenta";
 		}else
 		{
@@ -819,6 +799,7 @@ public class PrimerController
 			template.addAttribute("perfilActivo", "active");
 			template.addAttribute("nombrePerfil", result.getString("username"));
 			template.addAttribute("emailPerfil", result.getString("email"));
+			template.addAttribute("titulo", "Tu Cuenta - Perfil");
 			return "perfil";
 		}else
 		{
@@ -920,6 +901,7 @@ public class PrimerController
 			template.addAttribute("nombrePerfil", result.getString("username"));
 			template.addAttribute("emailPerfil", result.getString("email"));
 			template.addAttribute("listaAportes",listaAportes);
+			template.addAttribute("titulo", "Tu Cuenta - Tus Aportes");
 			return "aportes";
 		}else
 		{
@@ -975,6 +957,7 @@ public class PrimerController
 			template.addAttribute("registro", "Logout");
 			template.addAttribute("loginLink", "/cuenta");
 			template.addAttribute("registroLink", "/logout");
+			template.addAttribute("titulo", "Añadir una Cancion");
 			return "añadir";
 		}else
 		{
@@ -1003,9 +986,11 @@ public class PrimerController
 			template.addAttribute("loginLink", "/cuenta");
 			template.addAttribute("registroLink", "/logout");
 			template.addAttribute("Text", "text-align: center; font-size: 20px;");
+			template.addAttribute("titulo", "Ayudanos a Mejorar!");
 			return "enviarComentario";
 		}else
 		{
+			template.addAttribute("titulo", "Ayudanos a Mejorar!");
 			return "enviarComentarioSinLoguear";
 		}
 		// Fin de Autentificacion	
@@ -1062,6 +1047,7 @@ public class PrimerController
 				template.addAttribute("loginLink", "/cuenta");
 				template.addAttribute("registroLink", "/logout");
 				template.addAttribute("Text", "text-align: center; font-size: 20px;");
+				template.addAttribute("titulo", "Ayudanos a Mejorar!");
 				return "enviarComentario";
 			}
 			
@@ -1108,6 +1094,7 @@ public class PrimerController
 			}
 			else
 			{
+				template.addAttribute("titulo", "Ayudanos a Mejorar!");
 				return "enviarComentarioSinLoguear";
 			}
 		}
@@ -1208,6 +1195,7 @@ public class PrimerController
 				}
 				
 				template.addAttribute("listaanimes",listaAnimes);
+				template.addAttribute("titulo", "Añadir una Cancion");
 				
 				return "añadir";
 			}
@@ -1216,76 +1204,5 @@ public class PrimerController
 			return "redirect:/login";
 		}
 		// Fin de Autentificacion
-	}
-	
-	@PostMapping("/contacto")
-	public static String procesarInfo(	@RequestParam String nombre, 
-										@RequestParam String comentario, 
-										@RequestParam String email,
-										Model template) throws SQLException
-	{
-		
-		Connection connection;
-		connection = DriverManager.getConnection(Settings.db_url, Settings.db_user, Settings.db_password);
-		
-		template.addAttribute("nombre", nombre);
-		template.addAttribute("comentario", comentario);
-		template.addAttribute("email", email);
-		template.addAttribute("claseContacto","active");
-		
-		
-		if(nombre.equals("") || comentario.equals("") || email.equals(""))
-		{
-			//Cargar formulario devuelta
-			template.addAttribute("mensajeError","No Puede Haber campos Vacios");
-			template.addAttribute("error","alert alert-danger small");
-			return "contacto";
-		}
-		else
-		{
-			PreparedStatement ps = connection.prepareStatement("INSERT INTO mensajes(nombre,email,comentario) VALUES (?,?,?);");
-			ps.setString(1, nombre);
-			ps.setString(2, email);
-			ps.setString(3, comentario);
-			
-			ps.executeUpdate();
-			
-			// enviarCorreo(email,"tommy.1997@live.com.ar",comentario,"asunto");
-			return "GraciasContacto";
-		}
-	}
-	
-	@GetMapping("/prueba")
-	public static String paginaPrueba(Model template) throws SQLException
-	{
-		/*
-		Connection connection;
-        connection = DriverManager.getConnection(Settings.db_url, Settings.db_user, Settings.db_password);
-		PreparedStatement ps = connection.prepareStatement("SELECT * FROM animes ORDER BY visitas DESC LIMIT 8;");
-        
-		ResultSet resultado = ps.executeQuery();
-		ArrayList<Anime> listaHome;
-		listaHome = new ArrayList<Anime>();
-		
-		while(resultado.next())
-		{
-			Anime miAnime = new Anime(	resultado.getInt("id"),
-					resultado.getString("nombre"),
-					resultado.getString("sinopsis"),
-					resultado.getString("genero1"),
-					resultado.getString("genero2"),
-					resultado.getString("genero3"),
-					resultado.getString("tipo"),
-					resultado.getString("imagen"),
-					resultado.getInt("visitas"));
-			listaHome.add(miAnime);
-		}
-		
-		template.addAttribute("listaHome",listaHome);
-		
-		*/
-		
-        return "account";
-	}
-	
+	}	
 }
