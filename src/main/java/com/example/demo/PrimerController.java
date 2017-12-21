@@ -34,7 +34,7 @@ import model.Anime;
 import model.Cancion;
 import model.Contacto;
 
-
+// TODO: Crear paginas de Admins
 @Controller
 public class PrimerController 
 {
@@ -111,7 +111,6 @@ public class PrimerController
         }
     }
 	
-	// TODO: Terminar la subida de archivo y la validacion de tamaño de este
 	
 	
 	@GetMapping("/")
@@ -240,10 +239,7 @@ public class PrimerController
 		{
 			listaCanciones.add(resultado2.getString("tipo"));
 		}
-		
-		// TODO : Crear metodo y template especial para cada cacion mostrando 
-		// todas las canciones subidas y por que usuario...
-		
+				
 		template.addAttribute("archivo", animeDelID.getNombre() + " - ");
 		template.addAttribute("listaCanciones",listaCanciones);
 		template.addAttribute("titulo", titulo);
@@ -774,7 +770,73 @@ public class PrimerController
 		}
 		// Fin de Autentificacion
 	}
-
+	
+	@PostMapping("/cuenta/perfil")
+	public static String peginaCambiarInfo( Model template, HttpServletRequest request,
+											@RequestParam(required=false) String nuevoNombre,
+											@RequestParam(required=false) String nuevoEmail,
+											@RequestParam(required=false) String nuevaContraseña,
+											@RequestParam(required=false) String nuevaContraseña2,
+											@RequestParam(required=false) String contraseñaActual) throws SQLException
+	{
+		Connection connection;
+		connection = DriverManager.getConnection(Settings.db_url, Settings.db_user, Settings.db_password);
+		//Login Autentificacion
+				HttpSession session = request.getSession();
+				String numeroSession = (String) session.getAttribute("session");
+				String nombreUsuario;
+				PreparedStatement ps2 = connection.prepareStatement("SELECT * FROM usuarios WHERE session=?;");
+				PreparedStatement ps;
+				ps2.setString(1, numeroSession);
+				ResultSet result = ps2.executeQuery();
+				if(autentificacion(request,template) && result.next())
+				{
+					nombreUsuario = result.getString("username");
+					template.addAttribute("login", "Bienvenido/a, " + nombreUsuario);
+					template.addAttribute("registro", "Logout");
+					template.addAttribute("loginLink", "/cuenta");
+					template.addAttribute("registroLink", "/logout");
+					template.addAttribute("titulo", "Añadir una Cancion");
+					if(result.getString("password").equals(contraseñaActual))
+					{
+						if(!nuevoNombre.isEmpty())
+						{
+							ps = connection.prepareStatement("UPDATE usuarios SET username=?;");
+							ps.setString(1, nuevoNombre);
+							ps.executeUpdate();
+						}
+						else if(!nuevoEmail.isEmpty())
+						{
+							ps = connection.prepareStatement("UPDATE usuarios SET email=?;");
+							ps.setString(1, nuevoEmail);
+							ps.executeUpdate();
+						}
+						else if(!nuevaContraseña.isEmpty())
+						{
+							if(nuevaContraseña==nuevaContraseña2)
+							{
+								ps = connection.prepareStatement("UPDATE usuarios SET password=?");
+								ps.setString(1, nuevaContraseña);
+								ps.executeUpdate();
+							}
+							else
+							{
+								template.addAttribute("contraseñaError", "Las Contraseñas No Coinciden");
+								return "perfil";
+							}
+						}// TODO: Terminar si contraseña incorrecta
+					}
+					
+					return "redirect:/cuenta/perfil";
+				}else
+				{
+					return "redirect:/login";
+				}
+				// Fin de Autentificacion
+		
+		
+	}
+	
 	@GetMapping("/cuenta/perfil")
 	public static String paginaCuentaPerfil(Model template, HttpServletRequest request) throws SQLException 
 	{

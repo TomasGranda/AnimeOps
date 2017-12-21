@@ -8,7 +8,7 @@
 		
 	</head>
 	
-		<span layout:fragment="contenido">
+		<form action="/cuenta/perfil" method="POST" layout:fragment="contenido">
 			<div class="row">
 				<div class="col">
 					<ul class="nav nav-tabs centered">
@@ -29,11 +29,8 @@
 					<hr></hr>
 					<p th:text="${nombrePerfil}"></p>
 					<br></br>
-					<form action="/cuenta/perfil" method="POST">
-						<p>Cambiar Nombre de Usuario</p>
-						<input type="text" name="nuevoNombre" placeholder="Nuevo Nombre de Usuario..." size="25"></input>
-						<button type="submit">Cambiar Nombre</button>
-					</form>
+					<p>Cambiar Nombre de Usuario</p>
+					<input type="text" name="nuevoNombre" placeholder="Nuevo Nombre de Usuario..." size="25"></input>
 				</div>
 			</div>
 			<div class="row">
@@ -44,14 +41,36 @@
 					<hr></hr>
 					<p th:text="${emailPerfil}"></p>
 					<br></br>
-					<form action="/cuenta/perfil" method="POST">
-						<p>Cambiar Direccion de Email</p>
-						<input type="text" name="nuevoEmail" placeholder="Nueva Direccion de Email..." size="25"></input>
-						<button type="submit">Cambiar Email</button>
-					</form>
+					<p>Cambiar Direccion de Email</p>
+					<input type="text" name="nuevoEmail" placeholder="Nueva Direccion de Email..." size="25"></input>
 				</div>
 			</div>
-		</span>
+			<div class="row">
+				<div class="col">
+					<hr></hr>
+					<br></br>
+					<h3 style="text-decoration: underline;">Contrase&ntilde;a:</h3>
+					<hr></hr>
+					<br></br>
+					<p>Cambiar Contrase&ntilde;a</p>
+					<input type="text" name="nuevaContraseña" placeholder="Nueva Contrase&ntilde;a..." size="25"></input>
+					<input type="text" name="nuevaContraseña2" placeholder="Repita Contrase&ntilde;a..." size="25"></input>
+					<br></br>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col">
+					<hr></hr>
+					<br></br>
+					<h3 style="text-decoration: underline;">Guardar Datos</h3>
+					<hr></hr>
+					<br></br>
+					<input type="text" name="contraseñaActual" placeholder="Contrase&ntilde;a Actual..." size="25"></input>
+					<button type="submit" class="btn btn-info">Guardar Datos...</button>
+					
+				</div>
+			</div>
+		</form>
 
 
 </html>
