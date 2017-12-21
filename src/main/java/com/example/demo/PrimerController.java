@@ -30,6 +30,7 @@ import com.sendgrid.Request;
 import com.sendgrid.Response;
 import com.sendgrid.SendGrid;
 
+import ch.qos.logback.core.net.SyslogOutputStream;
 import model.Anime;
 import model.Cancion;
 import model.Contacto;
@@ -58,7 +59,7 @@ public class PrimerController
 				contNumero++;
 			}
 		}
-		if(contLetraMin < 1 || contLetraMay < 1 || contNumero < 1)
+		if(contLetraMin < 1 || contLetraMay < 1 || contNumero < 1 || contNumero + contLetraMay + contLetraMin < 8)
 		{
 			return false;
 		}
@@ -537,7 +538,7 @@ public class PrimerController
 		ps2.setString(1, email);
 		ResultSet resultado2 = ps2.executeQuery();
 		ResultSet resultado = ps.executeQuery();
-		if(resultado.next())
+		if(resultado.next())//TODO
 		{
 			template.addAttribute("mensajeErrorUsername","Error: Nombre de usuario no disponible");
 			template.addAttribute("errorUsername","alert alert-danger small");
@@ -572,7 +573,7 @@ public class PrimerController
 		}
 		if(!comprobarPassword(password))
 		{
-			template.addAttribute("mensajeErrorPassword","Error: La Contraseña debe tener una Letra Mayuscula, una Minuscula y un Numero");
+			template.addAttribute("mensajeErrorPassword","Error: La Contraseña debe contener al menos 8 caracteres entre los cuales deben aparecer Letras Minisculas, Mayusculas y Numeros");
 			template.addAttribute("errorPassword","alert alert-danger small");
 			template.addAttribute("antesUsername",username);
 			template.addAttribute("antesEmail",email);
@@ -775,64 +776,116 @@ public class PrimerController
 	public static String peginaCambiarInfo( Model template, HttpServletRequest request,
 											@RequestParam(required=false) String nuevoNombre,
 											@RequestParam(required=false) String nuevoEmail,
-											@RequestParam(required=false) String nuevaContraseña,
-											@RequestParam(required=false) String nuevaContraseña2,
-											@RequestParam(required=false) String contraseñaActual) throws SQLException
+											@RequestParam(required=false) String newPass,
+											@RequestParam(required=false) String newPass2,
+											@RequestParam(required=false) String passActual) throws SQLException
 	{
 		Connection connection;
 		connection = DriverManager.getConnection(Settings.db_url, Settings.db_user, Settings.db_password);
 		//Login Autentificacion
-				HttpSession session = request.getSession();
-				String numeroSession = (String) session.getAttribute("session");
-				String nombreUsuario;
-				PreparedStatement ps2 = connection.prepareStatement("SELECT * FROM usuarios WHERE session=?;");
-				PreparedStatement ps;
-				ps2.setString(1, numeroSession);
-				ResultSet result = ps2.executeQuery();
-				if(autentificacion(request,template) && result.next())
-				{
-					nombreUsuario = result.getString("username");
-					template.addAttribute("login", "Bienvenido/a, " + nombreUsuario);
-					template.addAttribute("registro", "Logout");
-					template.addAttribute("loginLink", "/cuenta");
-					template.addAttribute("registroLink", "/logout");
-					template.addAttribute("titulo", "Añadir una Cancion");
-					if(result.getString("password").equals(contraseñaActual))
+		boolean cNombre = true, cEmail = true, cPass = true;
+		HttpSession session = request.getSession();
+		template.addAttribute("Text", "text-align: center; font-size: 20px;");
+		String numeroSession = (String) session.getAttribute("session");
+		String nombreUsuario;
+		PreparedStatement ps2 = connection.prepareStatement("SELECT * FROM usuarios WHERE session=?;");
+		PreparedStatement ps;
+		ps2.setString(1, numeroSession);
+		ResultSet result = ps2.executeQuery();
+		ResultSet resultado;
+		if(autentificacion(request,template) && result.next())
+		{
+			String password = result.getString("password");
+			nombreUsuario = result.getString("username");
+			template.addAttribute("nombrePerfil", nombreUsuario);
+			template.addAttribute("emailPerfil", result.getString("email"));
+			template.addAttribute("login", "Bienvenido/a, " + nombreUsuario);
+			template.addAttribute("registro", "Logout");
+			template.addAttribute("loginLink", "/cuenta");
+			template.addAttribute("registroLink", "/logout");
+			template.addAttribute("titulo", "Tu Cuenta - Perfil");
+			if(password.equals(passActual))
+			{
+				if(nuevoNombre != null && !nuevoNombre.isEmpty())
+				{//TODO
+					ps = connection.prepareStatement("SELECT FROM usuarios WHERE username=?;");
+					ps.setString(1, nuevoNombre);
+					resultado = ps.executeQuery();
+					if(!resultado.next())
 					{
-						if(!nuevoNombre.isEmpty())
-						{
-							ps = connection.prepareStatement("UPDATE usuarios SET username=?;");
-							ps.setString(1, nuevoNombre);
-							ps.executeUpdate();
-						}
-						else if(!nuevoEmail.isEmpty())
-						{
-							ps = connection.prepareStatement("UPDATE usuarios SET email=?;");
-							ps.setString(1, nuevoEmail);
-							ps.executeUpdate();
-						}
-						else if(!nuevaContraseña.isEmpty())
-						{
-							if(nuevaContraseña==nuevaContraseña2)
-							{
-								ps = connection.prepareStatement("UPDATE usuarios SET password=?");
-								ps.setString(1, nuevaContraseña);
-								ps.executeUpdate();
-							}
-							else
-							{
-								template.addAttribute("contraseñaError", "Las Contraseñas No Coinciden");
-								return "perfil";
-							}
-						}// TODO: Terminar si contraseña incorrecta
+						ps = connection.prepareStatement("UPDATE usuarios SET username=? WHERE username=?;");
+						ps.setString(1, nuevoNombre);
+						ps.setString(2, nombreUsuario);
+						template.addAttribute("mensajeErrorUsername","Nombre de Usuario Cambiado con Exito");
+						template.addAttribute("errorUsername","alert alert-success small");
+						ps.executeUpdate();
 					}
-					
-					return "redirect:/cuenta/perfil";
-				}else
-				{
-					return "redirect:/login";
+					else
+					{
+						template.addAttribute("mensajeErrorUsername","Error: Nombre de usuario no disponible");
+						template.addAttribute("errorUsername","alert alert-danger small");
+						cNombre = false;
+					}
 				}
-				// Fin de Autentificacion
+				if(nuevoEmail != null && !nuevoEmail.isEmpty())
+				{
+					ps = connection.prepareStatement("SELECT FROM usuarios WHERE email=?");
+					ps.setString(1, nuevoEmail);
+					resultado = ps.executeQuery();
+					if(!resultado.next())
+					{
+						ps = connection.prepareStatement("UPDATE usuarios SET email=? WHERE username=?;");
+						ps.setString(1, nuevoEmail);
+						ps.setString(2, nombreUsuario);
+						ps.executeUpdate();
+						template.addAttribute("mensajeErrorEmail","Email Cambiado con Exito");
+						template.addAttribute("errorEmail","alert alert-success small");
+						
+					}else
+					{
+						template.addAttribute("mensajeErrorEmail","Error: Email no disponible");
+						template.addAttribute("errorEmail","alert alert-danger small");
+						cEmail = false;
+					}
+				}
+				System.out.println(newPass);
+				if(newPass != null && !newPass.isEmpty())
+				{
+					if(comprobarPassword(newPass))
+					{
+						if(newPass.equals(newPass2))
+						{
+							ps = connection.prepareStatement("UPDATE usuarios SET password=? WHERE username=?;");
+							ps.setString(1, newPass);
+							ps.setString(2, nombreUsuario);
+							ps.executeUpdate();
+							template.addAttribute("mensajeErrorPass","Contraseña Cambiada con Exito");
+							template.addAttribute("errorPass","alert alert-success small");
+						}else
+						{
+							template.addAttribute("mensajeErrorPass","Error: Contraseñas no coinciden");
+							template.addAttribute("errorPass","alert alert-danger small");
+							cPass = false;
+						}
+					}else
+					{
+						template.addAttribute("mensajeErrorPass","Error: La Contraseña debe contener al menos 8 caracteres entre los cuales deben aparecer Letras Minisculas, Mayusculas y Numeros");
+						template.addAttribute("errorPass","alert alert-danger small");
+					}
+				}
+			}else
+			{
+				template.addAttribute("errorMensajeContrasena", "Error: Contraseña Incorrecta");
+				template.addAttribute("errorContrasena","alert alert-danger small");
+				template.addAttribute("antesUsername",nuevoNombre);
+				template.addAttribute("antesEmail",nuevoEmail);
+			}
+			return "perfil";
+		}else
+		{
+			return "redirect:/login";
+		}
+		// Fin de Autentificacion
 		
 		
 	}
