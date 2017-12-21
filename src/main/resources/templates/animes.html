@@ -6,7 +6,29 @@
 	
 				<div class="container" layout:fragment="contenido">
 						<h2>Todos los Animes:</h2>
-						<span th:each="anime : ${listaanimes}">
+						
+						<!-- RESPONSIVO 2 -->
+						<span th:each="anime : ${listaanimes}" class="d-block d-sm-none">
+							<div class="thing2">
+								<a th:href="'/animes/' + ${anime.id}">
+								   	<img th:src="'/img/' + ${anime.imagen}" alt=""></img>
+								   	<p th:text="${anime.nombre}"></p>
+								</a>
+							</div>
+						</span>
+						
+						<!-- RESPONSIVO 3 -->
+						<span th:each="anime : ${listaanimes}" class="col d-none d-sm-block d-md-none">
+							<div class="thing2">
+								<a th:href="'/animes/' + ${anime.id}">
+								   	<img th:src="'/img/' + ${anime.imagen}" alt=""></img>
+								   	<p th:text="${anime.nombre}"></p>
+								</a>
+							</div>
+						</span>
+						
+						<!-- ORIGINAL -->
+						<span th:each="anime : ${listaanimes}" class="d-none d-md-block">
 							<div class="thing">
 								<a th:href="'/animes/' + ${anime.id}">
 								   	<img th:src="'/img/' + ${anime.imagen}" class="img" alt=""></img>

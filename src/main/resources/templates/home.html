@@ -7,7 +7,31 @@
 		<div class="container" layout:fragment="contenido">
 			
 			<h2>AnimeOps<p class="subtitulo">Esta es una pagina de anime donde se suben subtitulos para los openings, endings y OST's de tus animes favoritos</p></h2>
-			<span th:each="anime : ${listaHome}">
+			
+			<!-- RESPONSIVO 2 -->
+						<span th:each="anime : ${listaHome}" class="d-block d-sm-none">
+							<div class="thing2">
+								<a th:href="'/animes/' + ${anime.id}">
+								   	<img th:src="'/img/' + ${anime.imagen}" alt=""></img>
+								   	<p th:text="${anime.nombre}"></p>
+								</a>
+							</div>
+						</span>
+						
+						<!-- RESPONSIVO 3 -->
+						<span th:each="anime : ${listaHome}" class="col d-none d-sm-block d-md-none">
+							<div class="thing2">
+								<a th:href="'/animes/' + ${anime.id}">
+								   	<img th:src="'/img/' + ${anime.imagen}" alt=""></img>
+								   	<p th:text="${anime.nombre}"></p>
+								</a>
+							</div>
+						</span>
+			
+			
+			
+			<!-- Original -->
+			<span th:each="anime : ${listaHome}" class="d-none d-md-block">
 				<div class="thing">
 					<a th:href="'/animes/' + ${anime.id}">
 					   	<img th:src="'/img/' + ${anime.imagen}" class="img" alt=""></img>

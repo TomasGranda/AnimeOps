@@ -9,6 +9,23 @@
 
 }
 
+.thing2 {
+  height: 300px;
+
+}
+
+.thing2 img {
+  width: 100%;
+  height: 50%;
+  object-fit: cover;
+
+border-radius: 45px 45px 45px 45px;
+-moz-border-radius: 45px 45px 45px 45px;
+-webkit-border-radius: 45px 45px 45px 45px;
+border: 0px solid #000000;
+
+}
+
 .thing img {
   width: 100%;
   height: 100%;
